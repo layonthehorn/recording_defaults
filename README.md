@@ -9,9 +9,13 @@ Then you can capture the sink directly in OBS and have audio channels with only 
 ![image](https://user-images.githubusercontent.com/47235696/194994209-f83f3c46-224c-4d4d-a7ca-eacd29fa040f.png)
 
 Example of Track layout. 
+
 Track 1: All sounds combined for quick review
+
 Track 2: Game sounds only
+
 Track 3: Voice Chat
+
 Track 4: Microphone
 
 ![image](https://user-images.githubusercontent.com/47235696/194994443-408fb18a-aa52-4d4b-8a65-ae8ace11544b.png)
