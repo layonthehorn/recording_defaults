@@ -1,4 +1,0 @@
-{
- "default.configured.audio.source": { "name": "alsa_input.usb-Corsair_Corsair_VOID_PRO_Wireless_Gaming_Headset-00.mono-fallback" },
- "default.configured.audio.sink": { "name": "alsa_output.usb-Corsair_Corsair_VOID_PRO_Wireless_Gaming_Headset-00.analog-stereo" }
-}
