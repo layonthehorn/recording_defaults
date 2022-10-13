@@ -5,7 +5,7 @@ Scripts and Settings to help with recording on Linux.
 
 The python script allows you to with a keyboard shortcut redirect wine applications to a audio sink.
 
-the drop in config files for pipewire allow quick setup of a game sink and a voice chat sink. also has setup for dac audio clock rates.
+The drop in config files for pipewire allow quick setup of a game sink and a voice chat sink.
 
 ## Requirements 
 This script needs both python and pipewire. The pulse audio pipewire packages are also required.
@@ -27,6 +27,6 @@ Track 4: Microphone
 ![image](https://user-images.githubusercontent.com/47235696/194994443-408fb18a-aa52-4d4b-8a65-ae8ace11544b.png)
 
 ## To Do
-Allow a list of applications to change audio settings on.
+~~Allow a list of applications to change audio settings on.~~
 
-Parse output from commands directly instead of writing to file work around.
+~~Parse output from commands directly instead of writing to file work around.~~
