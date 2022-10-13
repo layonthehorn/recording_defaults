@@ -1,9 +1,51 @@
 #!/usr/bin/env python3
 
-import os
+import subprocess
 
 
-def move_sinks(sink_name="game_sink", application_name="wine64-preloader"):
+def get_sink_number(sink_name):
+    sink_number = None
+    temp = subprocess.Popen(["pactl", 'list', "sinks"], stdout=subprocess.PIPE)
+    output = str(temp.communicate()[0])
+    output_cleaned = (output.replace(r"\t", ""))[2:-1]
+    results_list = output_cleaned.split(r"\n")
+
+    for item in results_list:
+        if item.startswith("Sink #"):
+            sink_number = (item.split("#"))[-1]
+
+        if item.endswith(sink_name):
+            # We are doing looking when we find the sink name we want.
+            return sink_number
+    else:
+        print("Found no matching sink names!")
+
+
+def get_stream_numbers(application_list):
+    temp = subprocess.Popen(["pactl", 'list', "sink-inputs"], stdout=subprocess.PIPE)
+    output = str(temp.communicate()[0])
+    output_cleaned = (output.replace(r"\t", ""))[2:-1]
+    results_list = output_cleaned.split(r"\n")
+
+    input_list = []
+    input_number = 0
+
+    for item in results_list:
+
+        if item.startswith("Sink Input #"):
+            input_number = (item.split("#"))[-1]
+
+        for app in application_list:
+            if item.endswith(f"{app}\""):
+                input_list.append(input_number)
+
+    return input_list
+
+
+# Adding applications to the tuple to move things not running in Wine.
+# because of the tuple you will need at least 2 items in the list.
+# I have gone with Wine and FMOD due to the high number of games using either on Linux.
+def move_sinks(sink_name="game_sink", application_list=("wine64-preloader","FMOD Ex App")):
     """
     Best used with applications that the audio stream goes away from when alt-tabbing.
     Works with all wine applications no matter how many output streams they use.
@@ -32,56 +74,24 @@ Sink #36
 	Owner Module: 4294967295
 	Mute: no
 
+    :param application_list: Tuple of applications to move the sound output on,
     :param sink_name: Name of your sink
-    :param application_name: Name of the application binary to move.
+
     :return:
     """
 
-    path = f"{os.path.expanduser('~')}/.config/"
+    # Getting ID of the applications
+    input_list = get_stream_numbers(application_list)
 
-    os.system(f"pactl list sink-inputs >> {path}in.txt")
-
-    with open(f"{path}in.txt", "r") as file:
-        inputs = file.read()
-
-    # get sinks
-    os.system(f"pactl list sinks >> {path}sink.txt")
-
-    with open(f"{path}sink.txt", "r") as file:
-        sinks = file.read()
-
-    input_list = []
-
-    sink_number = 0
-    input_number = 0
-
-    for item in sinks.splitlines():
-        if item.startswith("Sink #"):
-            sink_number = (item.split("#"))[-1]
-
-        if item.endswith(sink_name):
-            # We are doing looking when we find the sink name we want.
-            break
-    else:
-        print("Found no matching sinks!")
-
-    for item in inputs.splitlines():
-
-        if item.startswith("Sink Input #"):
-            input_number = (item.split("#"))[-1]
-
-        if item.endswith(f"{application_name}\""):
-            input_list.append(input_number)
+    # Getting the ID of the sink
+    sink_number = get_sink_number(sink_name)
 
     if len(input_list) > 0:
         for number in input_list:
-            os.system(f"pactl move-sink-input {number} {sink_number}")
+            subprocess.Popen(["pactl", 'move-sink-input', f"{number}", f"{sink_number}"], stdout=subprocess.PIPE)
 
     else:
         print("Found no wine applications!")
-
-    os.remove(f"{path}in.txt")
-    os.remove(f"{path}sink.txt")
 
 
 if __name__ == '__main__':
